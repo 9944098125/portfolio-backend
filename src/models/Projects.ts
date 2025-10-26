@@ -20,6 +20,10 @@ const projectsSchema = new mongoose.Schema(
 		githubLink: {
 			type: String,
 		},
+		userId: {
+			type: mongoose.Types.ObjectId,
+			ref: "Users",
+		},
 	},
 	{ timestamps: true }
 );

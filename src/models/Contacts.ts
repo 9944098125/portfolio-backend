@@ -8,6 +8,10 @@ const contactsSchema = new mongoose.Schema(
 		logo: {
 			type: String,
 		},
+		userId: {
+			type: mongoose.Types.ObjectId,
+			ref: "Users",
+		},
 	},
 	{ timestamps: true }
 );

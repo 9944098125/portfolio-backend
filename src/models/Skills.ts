@@ -8,6 +8,10 @@ const skillsSchema = new mongoose.Schema(
 		level: {
 			type: ["Beginner", "Intermediate", "Expert"],
 		},
+		userId: {
+			type: mongoose.Types.ObjectId,
+			ref: "Users",
+		},
 	},
 	{ timestamps: true }
 );
