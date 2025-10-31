@@ -6,6 +6,10 @@ import cookieParser from "cookie-parser";
 import { dbConnection } from "./dbConnection/db";
 
 import authRoute from "./routes/auth";
+import contactsRoute from "./routes/contacts";
+import projectsRoute from "./routes/projects";
+import skillsRoute from "./routes/skills";
+import educationalDetailsRoute from "./routes/educationalDetails";
 
 dotenv.config();
 const app = express();
@@ -22,7 +26,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // to allow nested objects in the request body I don't know
 
 // routes for different api's
-app.use("/api", authRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/contacts", contactsRoute);
+app.use("/api/projects", projectsRoute);
+app.use("/api/skills", skillsRoute);
+app.use("/api/educationalDetails", educationalDetailsRoute);
 
 // next error if request is not valid
 app.use((error: any, req: Request, res: Response, next: Function): void => {
@@ -36,7 +44,7 @@ app.use((error: any, req: Request, res: Response, next: Function): void => {
 	return;
 });
 
-const port = process.env.PORT || 6001;
+const port = process.env.PORT || 5051;
 
 app.listen(port, () => {
 	dbConnection();
