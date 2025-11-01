@@ -1,0 +1,133 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteUser = exports.getUserById = exports.getAllUsers = exports.updateUser = exports.login = exports.register = void 0;
+const Users_1 = __importDefault(require("../models/Users"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const sendMail_1 = require("../helpers/sendMail");
+const register = async (req, res, next) => {
+    try {
+        const { email, phone, password } = req.body;
+        const existingUser = await Users_1.default.findOne({
+            $or: [{ email: email }, { phone: phone }],
+        });
+        if (existingUser) {
+            return res.status(404).json({
+                message: "User already exists with this Email/Phone",
+                error: new Error("User already exists !"),
+            });
+        }
+        const saltRounds = bcryptjs_1.default.genSaltSync(12);
+        const hashedPassword = bcryptjs_1.default.hashSync(saltRounds);
+        const newUser = new Users_1.default({
+            email,
+            phone,
+            password: hashedPassword,
+        });
+        await newUser.save();
+        (0, sendMail_1.sendRegistrationEmail)(email);
+        return res.status(201).json({
+            message: "User Registered Successfully !",
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.register = register;
+const login = async (req, res, next) => {
+    try {
+        const { emailOrPhone, password } = req.body;
+        if (!emailOrPhone || !password) {
+            return res.status(404).json({
+                message: "Email/Phone and Password are required !",
+                error: new Error("Missing Required Fields !"),
+            });
+        }
+        const user = await Users_1.default.findOne({
+            $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+        });
+        if (!user) {
+            return res.status(400).json({
+                message: "User not found",
+                error: new Error("No User with this email or phone !"),
+            });
+        }
+        const passwordMatch = bcryptjs_1.default.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(405).json({
+                message: "Invalid Password !",
+                error: new Error("Wrong Password"),
+            });
+        }
+        const userWithoutPassword = await Users_1.default.findOne({
+            email: user?.email,
+        }).select("-password");
+        const token = jsonwebtoken_1.default.sign({ userId: user?._id, isAdmin: user?.is_admin }, process.env.SECRET_TOKEN);
+        return res.status(200).json({
+            message: "Login Success !",
+            user: userWithoutPassword,
+            token: token,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.login = login;
+const updateUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        await Users_1.default.findByIdAndUpdate(userId, { $set: { ...req.body } }, { new: true });
+        return res.status(200).json({
+            message: "Updated the user successfully",
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.updateUser = updateUser;
+const getAllUsers = async (req, res, next) => {
+    try {
+        const users = await Users_1.default.find();
+        return res.status(200).json({
+            message: "Fetched all the users successfully",
+            data: users,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.getAllUsers = getAllUsers;
+const getUserById = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        const user = await Users_1.default.findOne({ _id: userId }).select("-password");
+        return res.status(200).json({
+            message: "Fetched the user successfully",
+            data: user,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.getUserById = getUserById;
+const deleteUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        await Users_1.default.findByIdAndDelete(userId);
+        return res.status(200).json({
+            message: "User has been deleted successfully",
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.deleteUser = deleteUser;
