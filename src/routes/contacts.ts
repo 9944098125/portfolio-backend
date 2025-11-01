@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { verifyOwner } from "../middleware/verify";
 import {
+	contactAdmin,
 	createContact,
 	deleteContact,
 	getContactsByUserId,
@@ -20,5 +21,7 @@ router.route("/update-contact/:contactId").post(verifyOwner, updateContact);
 
 router.route("/delete-contact/:contactId").post(verifyOwner, deleteContact);
 // route to delete a contact
+
+router.route("/contact-admin").post(contactAdmin);
 
 export default router;
