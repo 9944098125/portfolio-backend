@@ -1,0 +1,16 @@
+####### CREATE USER
+POST http://localhost:5050/api/auth/register
+Content-Type: application/json
+
+{
+    "full_name": "Akella Srinivas Prasad",
+    "password": "Srinivas@8",
+    "email": "srinivas72075@gmail.com",
+    "is_admin":true,
+    "countryCode":"91+",
+    "phone":"7995643201",
+    "image":"https://res.cloudinary.com/dakda5ni3/image/upload/v1739096735/blrfjjb8mab4hekxprqj.jpg",
+    "about":"I'm a MERN Stack Developer with 3+ years of experience in building web applications in production level.",
+    "city":"Kakinada",
+    "designation":"Web Developer"
+}

@@ -10,9 +10,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const sendMail_1 = require("../helpers/sendMail");
 const register = async (req, res, next) => {
     try {
-        const { email, phone, password } = req.body;
         const existingUser = await Users_1.default.findOne({
-            $or: [{ email: email }, { phone: phone }],
+            $or: [{ email: req.body.email }, { phone: req.body.phone }],
         });
         if (existingUser) {
             return res.status(404).json({
@@ -23,12 +22,11 @@ const register = async (req, res, next) => {
         const saltRounds = bcryptjs_1.default.genSaltSync(12);
         const hashedPassword = bcryptjs_1.default.hashSync(saltRounds);
         const newUser = new Users_1.default({
-            email,
-            phone,
+            ...req.body,
             password: hashedPassword,
         });
         await newUser.save();
-        (0, sendMail_1.sendRegistrationEmail)(email);
+        (0, sendMail_1.sendRegistrationEmail)(req.body.email);
         return res.status(201).json({
             message: "User Registered Successfully !",
         });

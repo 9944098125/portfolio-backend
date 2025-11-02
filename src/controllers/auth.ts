@@ -10,9 +10,8 @@ export const register = async (
 	next: NextFunction
 ) => {
 	try {
-		const { email, phone, password } = req.body;
 		const existingUser = await Users.findOne({
-			$or: [{ email: email }, { phone: phone }],
+			$or: [{ email: req.body.email }, { phone: req.body.phone }],
 		});
 		if (existingUser) {
 			return res.status(404).json({
@@ -23,12 +22,11 @@ export const register = async (
 		const saltRounds = bcryptJs.genSaltSync(12);
 		const hashedPassword = bcryptJs.hashSync(saltRounds);
 		const newUser = new Users({
-			email,
-			phone,
+			...req.body,
 			password: hashedPassword,
 		});
 		await newUser.save();
-		sendRegistrationEmail(email);
+		sendRegistrationEmail(req.body.email);
 		return res.status(201).json({
 			message: "User Registered Successfully !",
 		});

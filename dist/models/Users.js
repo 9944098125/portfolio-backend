@@ -15,6 +15,9 @@ const usersSchema = new mongoose_1.default.Schema({
         type: String,
         unique: true,
     },
+    countryCode: {
+        type: String,
+    },
     phone: {
         type: String,
         unique: true,
