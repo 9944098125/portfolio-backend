@@ -12,7 +12,9 @@ export const verifyAdmin = async (
 	next: NextFunction
 ) => {
 	try {
-		const token = req.headers.authorization?.split(" ")[1];
+		console.log("req.headers", req.headers.authorization);
+		const token =
+			req.headers.authorization && req.headers.authorization.split(" ")[1];
 		if (!token) {
 			return res.status(400).json({
 				message: "Token not Provided",
@@ -26,6 +28,7 @@ export const verifyAdmin = async (
 					error: err,
 				});
 			}
+			console.log("decoded", decoded);
 			if (decoded?.isAdmin) {
 				next();
 			} else {
@@ -46,7 +49,8 @@ export const verifyOwner = async (
 	next: NextFunction
 ) => {
 	try {
-		const token = req.headers.authorization?.split(" ")[1];
+		const token =
+			req.headers.authorization && req.headers.authorization.split(" ")[1];
 		if (!token) {
 			return res.status(400).json({
 				message: "Token not Provided",

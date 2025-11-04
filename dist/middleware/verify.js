@@ -8,7 +8,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Users_1 = __importDefault(require("../models/Users"));
 const verifyAdmin = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
+        console.log("req.headers", req.headers.authorization);
+        const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
         if (!token) {
             return res.status(400).json({
                 message: "Token not Provided",
@@ -22,6 +23,7 @@ const verifyAdmin = async (req, res, next) => {
                     error: err,
                 });
             }
+            console.log("decoded", decoded);
             if (decoded?.isAdmin) {
                 next();
             }
@@ -40,7 +42,7 @@ const verifyAdmin = async (req, res, next) => {
 exports.verifyAdmin = verifyAdmin;
 const verifyOwner = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
+        const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
         if (!token) {
             return res.status(400).json({
                 message: "Token not Provided",

@@ -19,8 +19,8 @@ export const register = async (
 				error: new Error("User already exists !"),
 			});
 		}
-		const saltRounds = bcryptJs.genSaltSync(12);
-		const hashedPassword = bcryptJs.hashSync(saltRounds);
+		const salt = bcryptJs.genSaltSync(12);
+		const hashedPassword = bcryptJs.hashSync(req.body.password, salt);
 		const newUser = new Users({
 			...req.body,
 			password: hashedPassword,
@@ -40,43 +40,45 @@ export const login = async (
 	res: Response,
 	next: NextFunction
 ) => {
+	const { emailOrPhone, password } = req.body;
+	// console.log(req.body);
 	try {
-		const { emailOrPhone, password } = req.body;
-		if (!emailOrPhone || !password) {
-			return res.status(404).json({
-				message: "Email/Phone and Password are required !",
-				error: new Error("Missing Required Fields !"),
-			});
+		// check if the req has email or not
+		const isEmail = /^\S+@\S+\.\S+$/.test(emailOrPhone);
+
+		const query = isEmail ? { email: emailOrPhone } : { phone: emailOrPhone };
+		// console.log(OrPhone, password);
+		const existingUser = await Users.findOne(query);
+		if (!existingUser) {
+			return res
+				.status(400)
+				.json({ message: "No User with this email or Phone...❌" });
 		}
-		const user = await Users.findOne({
-			$or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
-		});
-		if (!user) {
-			return res.status(400).json({
-				message: "User not found",
-				error: new Error("No User with this email or phone !"),
-			});
+		const passwordHash =
+			typeof existingUser.password === "string" ? existingUser.password : "";
+		if (!passwordHash) {
+			return res
+				.status(400)
+				.json({ message: "User does not have a password set" });
 		}
-		const passwordMatch = bcryptJs.compare(password, user.password as string);
-		if (!passwordMatch) {
-			return res.status(405).json({
-				message: "Invalid Password !",
-				error: new Error("Wrong Password"),
-			});
+		const passwordMatches = await bcryptJs.compare(password, passwordHash);
+		if (!passwordMatches) {
+			return res.status(400).json({ message: "Wrong Password !" });
 		}
-		const userWithoutPassword = await Users.findOne({
-			email: user?.email,
-		}).select("-password");
+		const userWithoutPassword = await Users.findOne(query).select("-password");
 		const token = jwt.sign(
-			{ userId: user?._id, isAdmin: user?.is_admin },
+			{
+				userId: existingUser._id,
+				isAdmin: existingUser.is_admin,
+			},
 			process.env.SECRET_TOKEN!
 		);
-		return res.status(200).json({
-			message: "Login Success !",
-			user: userWithoutPassword,
+		res.status(200).json({
+			message: "Login Success ✅",
 			token: token,
+			user: userWithoutPassword,
 		});
-	} catch (err) {
+	} catch (err: any) {
 		next(err);
 	}
 };
