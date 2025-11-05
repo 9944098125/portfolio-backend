@@ -67,8 +67,8 @@ export const verifyOwner = async (
 			req.user = decoded;
 			const user = await Users.findOne({ _id: decoded?.userId });
 			if (
-				(req as any)?.user?._id?.toString() === user?._id?.toString() ||
-				(req as any)?.user?.is_admin
+				(req as any)?.user?.userId?.toString() === user?._id?.toString() ||
+				(req as any)?.user?.isAdmin
 			) {
 				next();
 			} else {
