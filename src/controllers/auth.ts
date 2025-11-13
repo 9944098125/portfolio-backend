@@ -3,6 +3,10 @@ import Users from "../models/Users";
 import bcryptJs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { sendRegistrationEmail } from "../helpers/sendMail";
+import Skills from "../models/Skills";
+import Projects from "../models/Projects";
+import Contacts from "../models/Contacts";
+import EducationalDetails from "../models/EducationalDetails";
 
 export const register = async (
 	req: Request,
@@ -126,10 +130,24 @@ export const getUserById = async (
 ) => {
 	try {
 		const { userId } = req.params;
-		const user = await Users.findOne({ _id: userId }).select("-password");
+		const user = await Users.findOne({ _id: userId })
+			.select("-password")
+			.lean();
+		const skills = await Skills.find({ userId: userId }).lean();
+		const projects = await Projects.find({ userId: userId }).lean();
+		const contacts = await Contacts.find({ userId: userId }).lean();
+		const educationalDetails = await EducationalDetails.find({
+			userId: userId,
+		}).lean();
 		return res.status(200).json({
 			message: "Fetched the user successfully",
-			data: user,
+			data: {
+				...user,
+				skills: skills,
+				projects: projects,
+				contacts: contacts,
+				educationalDetails: educationalDetails,
+			},
 		});
 	} catch (err) {
 		next(err);

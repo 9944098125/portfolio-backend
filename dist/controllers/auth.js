@@ -8,6 +8,10 @@ const Users_1 = __importDefault(require("../models/Users"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const sendMail_1 = require("../helpers/sendMail");
+const Skills_1 = __importDefault(require("../models/Skills"));
+const Projects_1 = __importDefault(require("../models/Projects"));
+const Contacts_1 = __importDefault(require("../models/Contacts"));
+const EducationalDetails_1 = __importDefault(require("../models/EducationalDetails"));
 const register = async (req, res, next) => {
     try {
         const existingUser = await Users_1.default.findOne({
@@ -105,10 +109,24 @@ exports.getAllUsers = getAllUsers;
 const getUserById = async (req, res, next) => {
     try {
         const { userId } = req.params;
-        const user = await Users_1.default.findOne({ _id: userId }).select("-password");
+        const user = await Users_1.default.findOne({ _id: userId })
+            .select("-password")
+            .lean();
+        const skills = await Skills_1.default.find({ userId: userId }).lean();
+        const projects = await Projects_1.default.find({ userId: userId }).lean();
+        const contacts = await Contacts_1.default.find({ userId: userId }).lean();
+        const educationalDetails = await EducationalDetails_1.default.find({
+            userId: userId,
+        }).lean();
         return res.status(200).json({
             message: "Fetched the user successfully",
-            data: user,
+            data: {
+                ...user,
+                skills: skills,
+                projects: projects,
+                contacts: contacts,
+                educationalDetails: educationalDetails,
+            },
         });
     }
     catch (err) {
