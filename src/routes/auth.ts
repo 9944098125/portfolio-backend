@@ -26,7 +26,7 @@ router.route("/get-users").get(getAllUsers);
 router.route("/get-user/:userId").get(verifyOwner, getUserById);
 // to get each user detailed portfolio details
 
-router.route("/delete-user/:userId").delete(verifyOwner, deleteUser);
+router.route("/delete-user/:userId").delete(verifyAdmin, deleteUser);
 // to delete the self portfolio
 
 export default router;
