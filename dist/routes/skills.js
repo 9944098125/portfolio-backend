@@ -9,8 +9,9 @@ const skills_1 = require("../controllers/skills");
 const router = (0, express_1.default)();
 router.route("/create-skill/:userId").post(verify_1.verifyOwner, skills_1.createSkill);
 // route to create a skills according to userId
-router.route("/get-skill/:userId").get(verify_1.verifyOwner, skills_1.readSkillsByUserId);
+router.route("/get-skills/:userId").get(verify_1.verifyOwner, skills_1.readSkillsByUserId);
 // route to get skills
+router.route("/get-skill/:skillId").get(verify_1.verifyOwner, skills_1.readSkillById);
 router.route("/update-skill/:skillId").post(verify_1.verifyOwner, skills_1.updateSkill);
 // route to update skill
 router.route("/delete-skill/:skillId").delete(verify_1.verifyOwner, skills_1.deleteSkill);

@@ -44,6 +44,26 @@ export const readSkillsByUserId = async (
 	}
 };
 
+export const readSkillById = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { skillId } = req.params;
+		const skill = await Skills.findOne({ _id: skillId });
+		if (!skill) {
+			return res.status(400).json({ message: "Skill Not Found !" });
+		}
+		return res.status(200).json({
+			message: "Found the Skill successfully",
+			skill: skill,
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
 export const updateSkill = async (
 	req: Request,
 	res: Response,
