@@ -8,6 +8,9 @@ const skillsSchema = new mongoose.Schema(
 		level: {
 			type: ["Beginner", "Intermediate", "Expert"],
 		},
+		logo: {
+			type: String,
+		},
 		userId: {
 			type: mongoose.Types.ObjectId,
 			ref: "Users",

@@ -11,6 +11,9 @@ const skillsSchema = new mongoose_1.default.Schema({
     level: {
         type: ["Beginner", "Intermediate", "Expert"],
     },
+    logo: {
+        type: String,
+    },
     userId: {
         type: mongoose_1.default.Types.ObjectId,
         ref: "Users",
