@@ -54,6 +54,23 @@ export const getProjectsByUserId = async (
 	}
 };
 
+export const getProjectById = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { projectId } = req.params;
+		const project = await Projects.findOne({ _id: projectId });
+		return res.status(200).json({
+			message: "Fetched project successfully",
+			data: project,
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
 export const updateProject = async (
 	req: Request,
 	res: Response,

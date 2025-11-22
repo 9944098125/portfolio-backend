@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProject = exports.updateProject = exports.getProjectsByUserId = exports.createProject = void 0;
+exports.deleteProject = exports.updateProject = exports.getProjectById = exports.getProjectsByUserId = exports.createProject = void 0;
 const Projects_1 = __importDefault(require("../models/Projects"));
 const createProject = async (req, res, next) => {
     try {
@@ -44,6 +44,20 @@ const getProjectsByUserId = async (req, res, next) => {
     }
 };
 exports.getProjectsByUserId = getProjectsByUserId;
+const getProjectById = async (req, res, next) => {
+    try {
+        const { projectId } = req.params;
+        const project = await Projects_1.default.findOne({ _id: projectId });
+        return res.status(200).json({
+            message: "Fetched project successfully",
+            data: project,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.getProjectById = getProjectById;
 const updateProject = async (req, res, next) => {
     try {
         const { projectId } = req.params;
