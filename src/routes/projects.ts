@@ -18,7 +18,7 @@ router.route("/get-projects/:userId").get(verifyOwner, getProjectsByUserId);
 
 router.route("/get-project/:projectId").get(verifyOwner, getProjectById);
 
-router.route("/update-project/:projectId").put(verifyOwner, updateProject);
+router.route("/update-project/:projectId").post(verifyOwner, updateProject);
 // route to update a project
 
 router.route("/delete-project/:projectId").delete(verifyOwner, deleteProject);

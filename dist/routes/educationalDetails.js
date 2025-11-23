@@ -13,8 +13,12 @@ router
     .get(verify_1.verifyOwner, edicationalDetails_1.getEducationalDetailsByUserId);
 // route to get educational details according to userId
 router
+    .route("/get-educational-detail/:edId")
+    .get(verify_1.verifyOwner, edicationalDetails_1.getEducationalDetailsById);
+// route to get educational details according to edId
+router
     .route("/update-educational-details/:educationId")
-    .put(verify_1.verifyOwner, edicationalDetails_1.updateEducationalDetails);
+    .post(verify_1.verifyOwner, edicationalDetails_1.updateEducationalDetails);
 // route to update educational details
 router
     .route("/delete-educational-details/:educationId")

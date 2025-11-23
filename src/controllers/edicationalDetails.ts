@@ -8,13 +8,14 @@ export const createEducationalDetails = async (
 ) => {
 	try {
 		// Implementation for creating educational details
-		const { name_of_education, passout_year, userId } = req.body;
+		const { name_of_education, start_year, passout_year, userId } = req.body;
 		if (!userId) {
 			return res.status(400).json({ message: "User ID is required" });
 		}
 		// Assume EducationalDetails is a mongoose model
 		const newEducation = new EducationalDetails({
 			name_of_education,
+			start_year,
 			passout_year,
 			userId,
 		});
@@ -45,6 +46,27 @@ export const getEducationalDetailsByUserId = async (
 	}
 };
 
+export const getEducationalDetailsById = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		// Implementation for getting educational details by ID
+		const { edId } = req.params;
+		const educationDetail = await EducationalDetails.findOne({ _id: edId });
+		if (!educationDetail) {
+			return res.status(400).json({ message: "Educational detail not found" });
+		}
+		res.status(200).json({
+			message: "Educational detail fetched successfully",
+			data: educationDetail,
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
 export const updateEducationalDetails = async (
 	req: Request,
 	res: Response,
@@ -53,11 +75,11 @@ export const updateEducationalDetails = async (
 	try {
 		// Implementation for updating educational details
 		const { educationId } = req.params;
-		const { name_of_education, passout_year } = req.body;
+		const { name_of_education, passout_year, start_year } = req.body;
 
 		const updatedEducation = await EducationalDetails.findByIdAndUpdate(
 			educationId,
-			{ name_of_education, passout_year },
+			{ name_of_education, passout_year, start_year },
 			{ new: true }
 		);
 

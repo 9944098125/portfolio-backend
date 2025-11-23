@@ -31,7 +31,7 @@ app.use("/api/auth", auth_1.default);
 app.use("/api/contacts", contacts_1.default);
 app.use("/api/projects", projects_1.default);
 app.use("/api/skills", skills_1.default);
-app.use("/api/educationalDetails", educationalDetails_1.default);
+app.use("/api/educational-details", educationalDetails_1.default);
 // next error if request is not valid
 app.use((error, req, res, next) => {
     const errStatus = error.status || 500;

@@ -3,6 +3,7 @@ import { verifyOwner } from "../middleware/verify";
 import {
 	createEducationalDetails,
 	deleteEducationalDetails,
+	getEducationalDetailsById,
 	getEducationalDetailsByUserId,
 	updateEducationalDetails,
 } from "../controllers/edicationalDetails";
@@ -20,8 +21,13 @@ router
 // route to get educational details according to userId
 
 router
+	.route("/get-educational-detail/:edId")
+	.get(verifyOwner, getEducationalDetailsById);
+// route to get educational details according to edId
+
+router
 	.route("/update-educational-details/:educationId")
-	.put(verifyOwner, updateEducationalDetails);
+	.post(verifyOwner, updateEducationalDetails);
 // route to update educational details
 
 router

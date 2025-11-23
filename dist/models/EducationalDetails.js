@@ -8,6 +8,9 @@ const educationalDetailsSchema = new mongoose_1.default.Schema({
     name_of_education: {
         type: String,
     },
+    start_year: {
+        type: String,
+    },
     passout_year: {
         type: String,
     },

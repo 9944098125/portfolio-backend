@@ -30,7 +30,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/contacts", contactsRoute);
 app.use("/api/projects", projectsRoute);
 app.use("/api/skills", skillsRoute);
-app.use("/api/educationalDetails", educationalDetailsRoute);
+app.use("/api/educational-details", educationalDetailsRoute);
 
 // next error if request is not valid
 app.use((error: any, req: Request, res: Response, next: Function): void => {

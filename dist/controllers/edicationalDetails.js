@@ -3,18 +3,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteEducationalDetails = exports.updateEducationalDetails = exports.getEducationalDetailsByUserId = exports.createEducationalDetails = void 0;
+exports.deleteEducationalDetails = exports.updateEducationalDetails = exports.getEducationalDetailsById = exports.getEducationalDetailsByUserId = exports.createEducationalDetails = void 0;
 const EducationalDetails_1 = __importDefault(require("../models/EducationalDetails"));
 const createEducationalDetails = async (req, res, next) => {
     try {
         // Implementation for creating educational details
-        const { name_of_education, passout_year, userId } = req.body;
+        const { name_of_education, start_year, passout_year, userId } = req.body;
         if (!userId) {
             return res.status(400).json({ message: "User ID is required" });
         }
         // Assume EducationalDetails is a mongoose model
         const newEducation = new EducationalDetails_1.default({
             name_of_education,
+            start_year,
             passout_year,
             userId,
         });
@@ -43,12 +44,30 @@ const getEducationalDetailsByUserId = async (req, res, next) => {
     }
 };
 exports.getEducationalDetailsByUserId = getEducationalDetailsByUserId;
+const getEducationalDetailsById = async (req, res, next) => {
+    try {
+        // Implementation for getting educational details by ID
+        const { edId } = req.params;
+        const educationDetail = await EducationalDetails_1.default.findOne({ _id: edId });
+        if (!educationDetail) {
+            return res.status(400).json({ message: "Educational detail not found" });
+        }
+        res.status(200).json({
+            message: "Educational detail fetched successfully",
+            data: educationDetail,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.getEducationalDetailsById = getEducationalDetailsById;
 const updateEducationalDetails = async (req, res, next) => {
     try {
         // Implementation for updating educational details
         const { educationId } = req.params;
-        const { name_of_education, passout_year } = req.body;
-        const updatedEducation = await EducationalDetails_1.default.findByIdAndUpdate(educationId, { name_of_education, passout_year }, { new: true });
+        const { name_of_education, passout_year, start_year } = req.body;
+        const updatedEducation = await EducationalDetails_1.default.findByIdAndUpdate(educationId, { name_of_education, passout_year, start_year }, { new: true });
         if (!updatedEducation) {
             return res.status(404).json({ message: "Educational details not found" });
         }

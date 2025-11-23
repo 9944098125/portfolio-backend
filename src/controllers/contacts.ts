@@ -39,6 +39,26 @@ export const getContactsByUserId = async (
 	}
 };
 
+export const getContactById = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { contactId } = req.params;
+		const contact = await Contacts.findOne({ _id: contactId });
+		if (!contact) {
+			return res.status(400).json({ message: "Contact not found" });
+		}
+		return res.status(200).json({
+			message: "Contact retrieved successfully",
+			data: contact,
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
 export const updateContact = async (
 	req: Request,
 	res: Response,

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.contactAdmin = exports.deleteContact = exports.updateContact = exports.getContactsByUserId = exports.createContact = void 0;
+exports.contactAdmin = exports.deleteContact = exports.updateContact = exports.getContactById = exports.getContactsByUserId = exports.createContact = void 0;
 const Contacts_1 = __importDefault(require("../models/Contacts"));
 const sendMail_1 = require("../helpers/sendMail");
 const createContact = async (req, res, next) => {
@@ -37,6 +37,23 @@ const getContactsByUserId = async (req, res, next) => {
     }
 };
 exports.getContactsByUserId = getContactsByUserId;
+const getContactById = async (req, res, next) => {
+    try {
+        const { contactId } = req.params;
+        const contact = await Contacts_1.default.findOne({ _id: contactId });
+        if (!contact) {
+            return res.status(400).json({ message: "Contact not found" });
+        }
+        return res.status(200).json({
+            message: "Contact retrieved successfully",
+            data: contact,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.getContactById = getContactById;
 const updateContact = async (req, res, next) => {
     try {
         const { contactId } = req.params;
