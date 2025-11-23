@@ -11,6 +11,10 @@ const educationalDetailsSchema = new mongoose.Schema(
 		passout_year: {
 			type: String,
 		},
+		present: {
+			type: Boolean,
+			default: false,
+		},
 		userId: {
 			type: mongoose.Types.ObjectId,
 			ref: "Users",
