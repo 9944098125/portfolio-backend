@@ -7,6 +7,7 @@ import Skills from "../models/Skills";
 import Projects from "../models/Projects";
 import Contacts from "../models/Contacts";
 import EducationalDetails from "../models/EducationalDetails";
+import Themes from "../models/Themes";
 
 export const register = async (
 	req: Request,
@@ -139,6 +140,7 @@ export const getUserById = async (
 		const educationalDetails = await EducationalDetails.find({
 			userId: userId,
 		}).lean();
+		const selectedTheme = await Themes.findOne({ userId: userId }).lean();
 		return res.status(200).json({
 			message: "Fetched the user successfully",
 			data: {
@@ -147,6 +149,7 @@ export const getUserById = async (
 				projects: projects,
 				contacts: contacts,
 				educationalDetails: educationalDetails,
+				selectedTheme: selectedTheme,
 			},
 		});
 	} catch (err) {

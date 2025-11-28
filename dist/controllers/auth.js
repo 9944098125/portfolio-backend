@@ -12,6 +12,7 @@ const Skills_1 = __importDefault(require("../models/Skills"));
 const Projects_1 = __importDefault(require("../models/Projects"));
 const Contacts_1 = __importDefault(require("../models/Contacts"));
 const EducationalDetails_1 = __importDefault(require("../models/EducationalDetails"));
+const Themes_1 = __importDefault(require("../models/Themes"));
 const register = async (req, res, next) => {
     try {
         const existingUser = await Users_1.default.findOne({
@@ -118,6 +119,7 @@ const getUserById = async (req, res, next) => {
         const educationalDetails = await EducationalDetails_1.default.find({
             userId: userId,
         }).lean();
+        const selectedTheme = await Themes_1.default.findOne({ userId: userId }).lean();
         return res.status(200).json({
             message: "Fetched the user successfully",
             data: {
@@ -126,6 +128,7 @@ const getUserById = async (req, res, next) => {
                 projects: projects,
                 contacts: contacts,
                 educationalDetails: educationalDetails,
+                selectedTheme: selectedTheme,
             },
         });
     }

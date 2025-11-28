@@ -4,24 +4,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const educationalDetailsSchema = new mongoose_1.default.Schema({
-    name_of_education: {
+const themesSchema = new mongoose_1.default.Schema({
+    name: {
         type: String,
     },
-    start_year: {
+    primaryColor: {
         type: String,
     },
-    passout_year: {
+    secondaryColor: {
         type: String,
     },
-    present: {
-        type: Boolean,
-        default: false,
+    navbarBg: {
+        type: String,
+    },
+    background: {
+        type: String,
     },
     userId: {
         type: mongoose_1.default.Types.ObjectId,
         ref: "Users",
     },
 }, { timestamps: true });
-const EducationalDetails = mongoose_1.default.model("EducationalDetails", educationalDetailsSchema);
-exports.default = EducationalDetails;
+const Themes = mongoose_1.default.model("Themes", themesSchema);
+exports.default = Themes;
