@@ -14,6 +14,7 @@ const contacts_1 = __importDefault(require("./routes/contacts"));
 const projects_1 = __importDefault(require("./routes/projects"));
 const skills_1 = __importDefault(require("./routes/skills"));
 const educationalDetails_1 = __importDefault(require("./routes/educationalDetails"));
+const themes_1 = __importDefault(require("./routes/themes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
@@ -32,6 +33,7 @@ app.use("/api/contacts", contacts_1.default);
 app.use("/api/projects", projects_1.default);
 app.use("/api/skills", skills_1.default);
 app.use("/api/educational-details", educationalDetails_1.default);
+app.use("/api/themes", themes_1.default);
 // next error if request is not valid
 app.use((error, req, res, next) => {
     const errStatus = error.status || 500;

@@ -10,6 +10,7 @@ import contactsRoute from "./routes/contacts";
 import projectsRoute from "./routes/projects";
 import skillsRoute from "./routes/skills";
 import educationalDetailsRoute from "./routes/educationalDetails";
+import themesRoute from "./routes/themes";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/contacts", contactsRoute);
 app.use("/api/projects", projectsRoute);
 app.use("/api/skills", skillsRoute);
 app.use("/api/educational-details", educationalDetailsRoute);
+app.use("/api/themes", themesRoute);
 
 // next error if request is not valid
 app.use((error: any, req: Request, res: Response, next: Function): void => {
