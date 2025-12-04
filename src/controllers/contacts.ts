@@ -157,8 +157,16 @@ export const contactAdmin = async (
 		}
 
 		// ✅ All validations passed
-		await sendContactDetails(name, countryCode, phone, email, profession);
+		// Send email in background (non-blocking) for better performance
+		// This allows the API to respond immediately while email is sent asynchronously
+		sendContactDetails(name, countryCode, phone, email, profession).catch(
+			(err: any) => {
+				// Log email errors but don't block the response
+				console.error("Error sending contact email (non-blocking):", err);
+			}
+		);
 
+		// Respond immediately without waiting for email to be sent
 		return res.status(200).json({
 			message: "Contact details sent to admin successfully.",
 		});
