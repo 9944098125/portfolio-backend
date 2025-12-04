@@ -12,7 +12,7 @@ router.route("/update-user/:userId").post(verify_1.verifyOwner, auth_1.updateUse
 // route to update self portfolio fields
 router.route("/get-users").get(auth_1.getAllUsers);
 // to get all the users that is shown in the landing page
-router.route("/get-user/:userId").get(verify_1.verifyOwner, auth_1.getUserById);
+router.route("/get-user/:userId").get(auth_1.getUserById);
 // to get each user detailed portfolio details
 router.route("/delete-user/:userId").delete(verify_1.verifyAdmin, auth_1.deleteUser);
 // to delete the self portfolio
