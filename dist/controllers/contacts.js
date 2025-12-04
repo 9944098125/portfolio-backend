@@ -125,26 +125,40 @@ const contactAdmin = async (req, res, next) => {
             });
         }
         // ✅ All validations passed
-        // Send email in background (non-blocking) for better performance
-        // This allows the API to respond immediately while email is sent asynchronously
-        (0, sendMail_1.sendContactDetails)(name, countryCode, phone, email, profession).catch((err) => {
-            // Log email errors but don't block the response
-            console.error("Error sending contact email (non-blocking):", err);
-        });
-        // Respond immediately without waiting for email to be sent
+        // Send email and wait for confirmation before responding
+        // This ensures we only return success if email is actually sent
+        await (0, sendMail_1.sendContactDetails)(name, countryCode, phone, email, profession);
+        // Only return success if email was sent successfully
         return res.status(200).json({
             message: "Contact details sent to admin successfully.",
         });
     }
     catch (err) {
         console.error("Error in contactAdmin:", err);
-        // If it's an email error, provide a more user-friendly message
-        if (err?.code === "EAUTH" || err?.code === "ECONNECTION") {
+        // Handle specific email errors with user-friendly messages
+        if (err?.code === "EAUTH") {
             return res.status(500).json({
-                message: "Failed to send email. Please try again later.",
+                message: "Email authentication failed. Please check email configuration.",
+                success: false,
             });
         }
-        next(err);
+        if (err?.code === "ECONNECTION" || err?.code === "ETIMEDOUT" || err?.message?.includes("timeout")) {
+            return res.status(500).json({
+                message: "Failed to connect to email server. Please try again later.",
+                success: false,
+            });
+        }
+        if (err?.message?.includes("Email send timeout")) {
+            return res.status(500).json({
+                message: "Email sending timed out. Please try again later.",
+                success: false,
+            });
+        }
+        // Generic error response
+        return res.status(500).json({
+            message: err?.message || "Failed to send contact details. Please try again later.",
+            success: false,
+        });
     }
 };
 exports.contactAdmin = contactAdmin;
