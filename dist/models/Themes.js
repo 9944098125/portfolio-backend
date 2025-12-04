@@ -14,7 +14,7 @@ const themesSchema = new mongoose_1.default.Schema({
     secondaryColor: {
         type: String,
     },
-    navbarBg: {
+    boldBg: {
         type: String,
     },
     background: {

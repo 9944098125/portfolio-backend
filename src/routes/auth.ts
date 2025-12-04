@@ -23,7 +23,7 @@ router.route("/update-user/:userId").post(verifyOwner, updateUser);
 router.route("/get-users").get(getAllUsers);
 // to get all the users that is shown in the landing page
 
-router.route("/get-user/:userId").get(verifyOwner, getUserById);
+router.route("/get-user/:userId").get(getUserById);
 // to get each user detailed portfolio details
 
 router.route("/delete-user/:userId").delete(verifyAdmin, deleteUser);

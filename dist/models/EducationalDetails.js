@@ -18,6 +18,9 @@ const educationalDetailsSchema = new mongoose_1.default.Schema({
         type: Boolean,
         default: false,
     },
+    is_education: {
+        type: Boolean,
+    },
     userId: {
         type: mongoose_1.default.Types.ObjectId,
         ref: "Users",

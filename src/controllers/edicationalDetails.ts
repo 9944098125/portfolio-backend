@@ -8,7 +8,7 @@ export const createEducationalDetails = async (
 ) => {
 	try {
 		// Implementation for creating educational details
-		const { name_of_education, start_year, passout_year, present, userId } = req.body;
+		const { name_of_education, start_year, passout_year, present, is_education, userId } = req.body;
 		if (!userId) {
 			return res.status(400).json({ message: "User ID is required" });
 		}
@@ -18,6 +18,7 @@ export const createEducationalDetails = async (
 			start_year,
 			passout_year,
 			present: present || false,
+			is_education: is_education !== undefined ? is_education : true,
 			userId,
 		});
 		await newEducation.save();
@@ -76,11 +77,17 @@ export const updateEducationalDetails = async (
 	try {
 		// Implementation for updating educational details
 		const { educationId } = req.params;
-		const { name_of_education, passout_year, start_year, present } = req.body;
+		const { name_of_education, passout_year, start_year, present, is_education } = req.body;
 
 		const updatedEducation = await EducationalDetails.findByIdAndUpdate(
 			educationId,
-			{ name_of_education, passout_year, start_year, present: present || false },
+			{ 
+				name_of_education, 
+				passout_year, 
+				start_year, 
+				present: present || false,
+				is_education: is_education !== undefined ? is_education : true
+			},
 			{ new: true }
 		);
 

@@ -8,7 +8,7 @@ const EducationalDetails_1 = __importDefault(require("../models/EducationalDetai
 const createEducationalDetails = async (req, res, next) => {
     try {
         // Implementation for creating educational details
-        const { name_of_education, start_year, passout_year, present, userId } = req.body;
+        const { name_of_education, start_year, passout_year, present, is_education, userId } = req.body;
         if (!userId) {
             return res.status(400).json({ message: "User ID is required" });
         }
@@ -18,6 +18,7 @@ const createEducationalDetails = async (req, res, next) => {
             start_year,
             passout_year,
             present: present || false,
+            is_education: is_education !== undefined ? is_education : true,
             userId,
         });
         await newEducation.save();
@@ -67,8 +68,14 @@ const updateEducationalDetails = async (req, res, next) => {
     try {
         // Implementation for updating educational details
         const { educationId } = req.params;
-        const { name_of_education, passout_year, start_year, present } = req.body;
-        const updatedEducation = await EducationalDetails_1.default.findByIdAndUpdate(educationId, { name_of_education, passout_year, start_year, present: present || false }, { new: true });
+        const { name_of_education, passout_year, start_year, present, is_education } = req.body;
+        const updatedEducation = await EducationalDetails_1.default.findByIdAndUpdate(educationId, {
+            name_of_education,
+            passout_year,
+            start_year,
+            present: present || false,
+            is_education: is_education !== undefined ? is_education : true
+        }, { new: true });
         if (!updatedEducation) {
             return res.status(404).json({ message: "Educational details not found" });
         }
