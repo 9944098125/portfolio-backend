@@ -131,6 +131,13 @@ const contactAdmin = async (req, res, next) => {
         });
     }
     catch (err) {
+        console.error("Error in contactAdmin:", err);
+        // If it's an email error, provide a more user-friendly message
+        if (err?.code === "EAUTH" || err?.code === "ECONNECTION") {
+            return res.status(500).json({
+                message: "Failed to send email. Please try again later.",
+            });
+        }
         next(err);
     }
 };

@@ -162,7 +162,14 @@ export const contactAdmin = async (
 		return res.status(200).json({
 			message: "Contact details sent to admin successfully.",
 		});
-	} catch (err) {
+	} catch (err: any) {
+		console.error("Error in contactAdmin:", err);
+		// If it's an email error, provide a more user-friendly message
+		if (err?.code === "EAUTH" || err?.code === "ECONNECTION") {
+			return res.status(500).json({
+				message: "Failed to send email. Please try again later.",
+			});
+		}
 		next(err);
 	}
 };

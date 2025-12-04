@@ -13,7 +13,7 @@ async function sendRegistrationEmail(email) {
             service: "Gmail", // service provider
             auth: {
                 user: "srinivas72075@gmail.com",
-                pass: "ifhp vypf rhqb ubpw",
+                pass: "wfbr cwrv daxy tgzb",
             },
         });
         // Email content
@@ -36,32 +36,27 @@ async function sendRegistrationEmail(email) {
     }
 }
 async function sendContactDetails(name, countryCode, phone, email, profession) {
-    try {
-        // Create a transporter using your email service credentials
-        const transporter = nodemailer_1.default.createTransport({
-            service: "Gmail", // service provider
-            auth: {
-                user: "srinivas72075@gmail.com",
-                pass: "ifhp vypf rhqb ubpw",
-            },
-        });
-        // Email content
-        const mailOptions = {
-            from: "srinivas72075@gmail.com",
-            to: "srinivas72075@gmail.com",
-            subject: "I wanna know more about this, can we connect ???",
-            html: `
+    // Create a transporter using your email service credentials
+    const transporter = nodemailer_1.default.createTransport({
+        service: "Gmail", // service provider
+        auth: {
+            user: "srinivas72075@gmail.com",
+            pass: "wfbr cwrv daxy tgzb",
+        },
+    });
+    // Email content
+    const mailOptions = {
+        from: "srinivas72075@gmail.com",
+        to: "srinivas72075@gmail.com",
+        subject: "I wanna know more about this, can we connect ???",
+        html: `
        Name: ${name} <br/>
 		 Phone: ${countryCode} ${phone} <br/>
 		 Email: ${email} <br/>
 		 Profession: ${profession} <br/>
       `,
-        };
-        // Send the email
-        const info = await transporter.sendMail(mailOptions);
-        // console.log("Email sent:", info.messageId);
-    }
-    catch (error) {
-        console.error("Error sending email:", error);
-    }
+    };
+    // Send the email
+    const info = await transporter.sendMail(mailOptions);
+    // console.log("Email sent:", info.messageId);
 }
