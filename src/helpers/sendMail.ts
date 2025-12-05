@@ -16,8 +16,6 @@ function getTransporter(reset: boolean = false): Transporter {
 		const port = usePort465 ? 465 : 587;
 		const secure = usePort465;
 		
-		console.log(`Creating email transporter with port ${port} (secure: ${secure})...`);
-		
 		transporterInstance = nodemailer.createTransport({
 			host: "smtp.gmail.com",
 			port: port,
@@ -30,23 +28,22 @@ function getTransporter(reset: boolean = false): Transporter {
 			// Connection pool settings (disabled for better compatibility in hosted environments)
 			pool: false, // Disable pooling to avoid connection issues
 			// Increased timeouts for hosted environments with network latency
-			connectionTimeout: 30000, // 30 seconds - increased for hosted environments
+			connectionTimeout: 60000, // 60 seconds - increased for hosted environments
 			greetingTimeout: 30000, // 30 seconds - increased for hosted environments
-			socketTimeout: 60000, // 60 seconds - increased for hosted environments
+			socketTimeout: 90000, // 90 seconds - increased for hosted environments
 			// Additional options for better reliability
-			debug: true, // Enable debug for troubleshooting
-			logger: true, // Enable logging
+			debug: false, // Disable debug logging
+			logger: false, // Disable logger
+			tls: {
+				// Do not fail on invalid certificates
+				rejectUnauthorized: false,
+			},
 		} as any); // Type assertion needed due to nodemailer type definitions
 
 		// Verify transporter connection on startup (non-blocking)
 		// Disabled verification to prevent startup issues if SMTP is temporarily unavailable
-		transporterInstance.verify((error, success) => {
-			if (error) {
-				console.warn(`Email transporter verification failed on port ${port} (non-critical):`, error.message);
-				console.warn("Email will still attempt to send on demand.");
-			} else {
-				console.log(`✅ Email transporter ready on port ${port}`);
-			}
+		transporterInstance.verify(() => {
+			// Silent verification - errors are non-critical
 		});
 	}
 	return transporterInstance;
@@ -56,7 +53,6 @@ function getTransporter(reset: boolean = false): Transporter {
 function switchPortAndResetTransporter(): void {
 	usePort465 = !usePort465;
 	transporterInstance = null;
-	console.log(`Switching to port ${usePort465 ? 465 : 587} and resetting transporter...`);
 }
 
 export async function sendRegistrationEmail(email: string): Promise<void> {
@@ -92,10 +88,6 @@ export async function sendRegistrationEmail(email: string): Promise<void> {
 				throw new Error("Email was not accepted by server - no message ID returned");
 			}
 			
-			console.log(`✅ Registration email sent successfully (attempt ${attempt})`);
-			console.log(`   Message ID: ${info.messageId}`);
-			console.log(`   To: ${mailOptions.to}`);
-			console.log(`   Response: ${info.response || 'Accepted'}`);
 			return; // Success, exit function
 		} catch (error: any) {
 			lastError = error;
@@ -107,14 +99,12 @@ export async function sendRegistrationEmail(email: string): Promise<void> {
 
 			if (isTimeoutError && attempt < maxRetries) {
 				const waitTime = attempt * 2000; // Exponential backoff: 2s, 4s
-				console.warn(`Registration email attempt ${attempt} failed (timeout). Retrying in ${waitTime}ms...`, error.message);
 				await new Promise(resolve => setTimeout(resolve, waitTime));
 				
 				// Reset transporter instance to force new connection
 				transporterInstance = null;
 				continue;
 			} else {
-				console.error(`Error sending registration email (attempt ${attempt}):`, error);
 				if (attempt === maxRetries) {
 					// Reset transporter for next request
 					transporterInstance = null;
@@ -168,10 +158,6 @@ export async function sendContactDetails(
 				throw new Error("Email was not accepted by server - no message ID returned");
 			}
 			
-			console.log(`✅ Contact email sent successfully (attempt ${attempt})`);
-			console.log(`   Message ID: ${info.messageId}`);
-			console.log(`   To: ${mailOptions.to}`);
-			console.log(`   Response: ${info.response || 'Accepted'}`);
 			return; // Success, exit function
 		} catch (error: any) {
 			lastError = error;
@@ -186,12 +172,10 @@ export async function sendContactDetails(
 			if (isConnectionError && attempt < maxRetries) {
 				// On first retry, try switching ports (587 <-> 465)
 				if (attempt === 1) {
-					console.warn(`Email send attempt ${attempt} failed. Trying alternate port...`, error.message);
 					switchPortAndResetTransporter();
 					await new Promise(resolve => setTimeout(resolve, 1000)); // Brief delay
 				} else {
 					const waitTime = attempt * 2000; // Exponential backoff: 2s, 4s, etc.
-					console.warn(`Email send attempt ${attempt} failed. Retrying in ${waitTime}ms...`, error.message);
 					await new Promise(resolve => setTimeout(resolve, waitTime));
 					
 					// Reset transporter instance to force new connection
@@ -199,12 +183,6 @@ export async function sendContactDetails(
 				}
 				continue;
 			} else {
-				console.error(`Error sending contact email (attempt ${attempt}):`, error);
-				console.error(`Error details:`, {
-					code: error?.code,
-					message: error?.message,
-					command: error?.command,
-				});
 				if (attempt === maxRetries) {
 					// Reset transporter for next request
 					transporterInstance = null;

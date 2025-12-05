@@ -166,8 +166,6 @@ export const contactAdmin = async (
 			message: "Contact details sent to admin successfully.",
 		});
 	} catch (err: any) {
-		console.error("Error in contactAdmin:", err);
-		
 		// Handle specific email errors with user-friendly messages
 		if (err?.code === "EAUTH") {
 			return res.status(500).json({
