@@ -24,7 +24,8 @@ export async function sendContactDetails(
   countryCode: string,
   phone: string,
   email: string,
-  profession: string
+  profession: string,
+  message?: string
 ) {
   const msg = {
     to: "srinivas72075@gmail.com",
@@ -35,6 +36,7 @@ export async function sendContactDetails(
       <p><strong>Phone:</strong> ${escapeHtml(countryCode)} ${escapeHtml(phone)}</p>
       <p><strong>Email:</strong> ${escapeHtml(email)}</p>
       <p><strong>Profession:</strong> ${escapeHtml(profession)}</p>
+      ${message ? `<p><strong>Message:</strong> ${escapeHtml(message)}</p>` : ''}
     `,
   };
 

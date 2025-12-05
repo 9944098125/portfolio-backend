@@ -111,7 +111,7 @@ export const contactAdmin = async (
   next: NextFunction
 ) => {
   try {
-    const { name, email, countryCode, phone, profession } = req.body;
+    const { name, email, countryCode, phone, profession, message } = req.body;
 
     // -----------------------------
     // Basic validation
@@ -135,7 +135,7 @@ export const contactAdmin = async (
     // -----------------------------
     // Send email
     // -----------------------------
-    await sendContactDetails(name, countryCode, phone, email, profession);
+    await sendContactDetails(name, countryCode, phone, email, profession, message);
 
     // -----------------------------
     // Success response
