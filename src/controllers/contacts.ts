@@ -106,92 +106,46 @@ export const deleteContact = async (
 };
 
 export const contactAdmin = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
-	try {
-		const { name, email, countryCode, phone, profession } = req.body;
+  try {
+    const { name, email, countryCode, phone, profession } = req.body;
 
-		// 1️⃣ Basic presence check
-		if (!name || !email || !countryCode || !phone || !profession) {
-			return res.status(400).json({
-				message:
-					"All fields (name, email, countryCode, phone, profession) are required.",
-			});
-		}
+    // -----------------------------
+    // Basic validation
+    // -----------------------------
+    if (!name || !email || !countryCode || !phone || !profession) {
+      const missingFields = [];
 
-		// 2️⃣ Name validation: only alphabets & spaces
-		if (!/^[A-Za-z\s]+$/.test(name)) {
-			return res.status(400).json({
-				message: "Name must contain only letters and spaces.",
-			});
-		}
+      if (!name) missingFields.push("name");
+      if (!email) missingFields.push("email");
+      if (!countryCode) missingFields.push("countryCode");
+      if (!phone) missingFields.push("phone");
+      if (!profession) missingFields.push("profession");
 
-		// 3️⃣ Email validation
-		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-			return res.status(400).json({
-				message: "Please provide a valid email address.",
-			});
-		}
+      const error: any = new Error(
+        `Missing required fields: ${missingFields.join(", ")}`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
 
-		// 4️⃣ Country code validation: must start with '+' and have 1–4 digits
-		if (!/^\+\d{1,4}$/.test(countryCode)) {
-			return res.status(400).json({
-				message: "Invalid country code format. Example: +1 or +91",
-			});
-		}
+    // -----------------------------
+    // Send email
+    // -----------------------------
+    await sendContactDetails(name, countryCode, phone, email, profession);
 
-		// 5️⃣ Phone number validation: only digits, length between 7–15
-		if (!/^\d{7,15}$/.test(phone)) {
-			return res.status(400).json({
-				message: "Invalid phone number. Must be 7 to 15 digits long.",
-			});
-		}
-
-		// 6️⃣ Profession validation
-		if (profession.trim().length < 2) {
-			return res.status(400).json({
-				message: "Profession must be at least 2 characters long.",
-			});
-		}
-
-		// ✅ All validations passed
-		// Send email and wait for confirmation before responding
-		// This ensures we only return success if email is actually sent
-		await sendContactDetails(name, countryCode, phone, email, profession);
-
-		// Only return success if email was sent successfully
-		return res.status(200).json({
-			message: "Contact details sent to admin successfully.",
-		});
-	} catch (err: any) {
-		// Handle specific email errors with user-friendly messages
-		if (err?.code === "EAUTH") {
-			return res.status(500).json({
-				message: "Email authentication failed. Please check email configuration.",
-				success: false,
-			});
-		}
-		
-		if (err?.code === "ECONNECTION" || err?.code === "ETIMEDOUT" || err?.message?.includes("timeout")) {
-			return res.status(500).json({
-				message: "Failed to connect to email server. Please try again later.",
-				success: false,
-			});
-		}
-		
-		if (err?.message?.includes("Email send timeout")) {
-			return res.status(500).json({
-				message: "Email sending timed out. Please try again later.",
-				success: false,
-			});
-		}
-		
-		// Generic error response
-		return res.status(500).json({
-			message: err?.message || "Failed to send contact details. Please try again later.",
-			success: false,
-		});
-	}
+    // -----------------------------
+    // Success response
+    // -----------------------------
+    return res.status(200).json({
+      success: true,
+      message: "Contact details sent successfully.",
+    });
+  } catch (err) {
+    next(err); // forward to error middleware
+  }
 };
+

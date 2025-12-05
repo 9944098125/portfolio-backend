@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 // -----------------------------
 // Send Contact Details Email
 // -----------------------------
-export async function sendContactsDetails(
+export async function sendContactDetails(
   name: string,
   countryCode: string,
   phone: string,
