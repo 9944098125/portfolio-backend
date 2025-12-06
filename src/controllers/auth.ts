@@ -157,6 +157,54 @@ export const getUserById = async (
 	}
 };
 
+export const changePassword = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { userId } = req.params;
+		const { oldPassword, newPassword } = req.body;
+		const user = await Users.findById(userId);
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		const passwordHash = typeof user.password === "string" ? user.password : "";
+		const isMatch = await bcryptJs.compare(oldPassword, passwordHash);
+		if (!isMatch) {
+			return res.status(400).json({ message: "Old password is incorrect" });
+		}
+		const salt = bcryptJs.genSaltSync(12);
+		const hashedNewPassword = bcryptJs.hashSync(newPassword, salt);
+		user.password = hashedNewPassword;
+		await user.save();
+		return res.status(200).json({ message: "Password changed successfully" });
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const changeMode = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { userId } = req.params;
+		const { isDarkMode } = req.body; // 'light' or 'dark'
+		await Users.findByIdAndUpdate(
+			userId,
+			{ $set: { isDarkMode: isDarkMode } },
+			{ new: true }
+		);
+		return res.status(200).json({
+			message: `Mode changed to ${isDarkMode ? "Dark" : "Light"} successfully`,
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
 export const deleteUser = async (
 	req: Request,
 	res: Response,

@@ -56,6 +56,14 @@ const usersSchema = new mongoose.Schema(
 			type: mongoose.Types.ObjectId,
 			ref: "EducationalDetails",
 		},
+		selectedTheme: {
+			type: mongoose.Types.ObjectId,
+			ref: "Themes",
+		},
+		isDarkMode: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );

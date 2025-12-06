@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+	changePassword,
 	deleteUser,
 	getAllUsers,
 	getUserById,
@@ -25,6 +26,11 @@ router.route("/get-users").get(getAllUsers);
 
 router.route("/get-user/:userId").get(getUserById);
 // to get each user detailed portfolio details
+
+router.route("/change-password/:userId").post(verifyOwner, changePassword);
+// to change the password of self portfolio builder account
+
+router.route("/change-theme/:userId").post(verifyOwner, updateUser);
 
 router.route("/delete-user/:userId").delete(verifyAdmin, deleteUser);
 // to delete the self portfolio
